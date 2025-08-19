@@ -5,7 +5,6 @@ export async function POST(request, { params }) {
 
   try {
 
-
     const data = await request.json();
 
     const connection = await pool.getConnection();
