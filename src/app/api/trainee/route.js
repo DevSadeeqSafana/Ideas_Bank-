@@ -1,9 +1,11 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
 
-export async function PUT(request, { params }) {
-  
+export async function POST(request, { params }) {
+
   try {
+
+
     const data = await request.json();
 
     const connection = await pool.getConnection();
@@ -16,10 +18,10 @@ export async function PUT(request, { params }) {
       await connection.query(
         `UPDATE trainees SET 
         bank_name = ?, account_number = ?, account_name = ?, bvn = ?
-        WHERE trainee_id = ?`,
+        WHERE id = ?`,
         [
           data.bank_name, data.account_number, data.account_name, data.bvn,
-          id
+          data.traineeId
         ]
       );
 

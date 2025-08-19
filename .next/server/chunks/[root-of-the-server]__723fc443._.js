@@ -218,7 +218,6 @@ const __TURBOPACK__default__export__ = pool;
 
 __turbopack_context__.s({
     "GET": ()=>GET,
-    "POST": ()=>POST,
     "PUT": ()=>PUT
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
@@ -272,7 +271,7 @@ async function PUT(request, { params }) {
         has_completed_internship = ?, completion_letter_url = ?
         WHERE id = ?`, [
                 data.nin,
-                data.dateofbirth,
+                data.date_of_birth,
                 data.bank_name,
                 data.account_number,
                 data.account_name,
@@ -303,58 +302,50 @@ async function PUT(request, { params }) {
             status: 500
         });
     }
-}
-async function POST(request, { params }) {
-    const { id } = await params;
-    try {
-        const data = await request.json();
-        const { bank_name, account_number, account_name, bvn } = data;
-        if (!id) {
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: 'Trainee ID is required'
-            }, {
-                status: 400
-            });
-        }
-        console.log('Bank data received for trainee:', {
-            bank_name,
-            account_number,
-            account_name,
-            bvn,
-            id
-        });
-        // Update bank details in the trainees table
-        const result = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].query(`UPDATE trainees SET 
-       bank_name = ?, account_number = ?, account_name = ?, bvn = ?
-       WHERE id = ?`, [
-            bank_name,
-            account_number,
-            account_name,
-            bvn,
-            id
-        ]);
-        console.log('Update result:', result);
-        if (result[0].affectedRows === 0) {
-            return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-                error: 'Trainee not found'
-            }, {
-                status: 404
-            });
-        }
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            message: 'Bank details updated successfully'
-        }, {
-            status: 200
-        });
-    } catch (error) {
-        console.error('Update bank error:', error);
-        return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
-            error: 'Internal server error'
-        }, {
-            status: 500
-        });
-    }
-}
+} // export async function POST(request, { params }) {
+ //   const { id } = await params;
+ //   try {
+ //     const data = await request.json();
+ //     console.log('Raw POST data received:', JSON.stringify(data, null, 2));
+ //     const { bank_name, account_number, account_name, bvn } = data;
+ //     if (!id) {
+ //       console.error('No trainee ID provided');
+ //       return NextResponse.json({ error: 'Trainee ID is required' }, { status: 400 });
+ //     }
+ //     console.log('Extracted bank data:', { bank_name, account_number, account_name, bvn });
+ //     console.log('Trainee ID from params:', id);
+ //     // Validate that we have the required bank data
+ //     if (!bank_name || !account_number || !account_name || !bvn) {
+ //       console.error('Missing required bank fields:', { bank_name, account_number, account_name, bvn });
+ //       return NextResponse.json({ error: 'All bank fields are required' }, { status: 400 });
+ //     }
+ //     // First check if the trainee exists
+ //     const [existingTrainee] = await pool.query('SELECT id FROM trainees WHERE id = ?', [id]);
+ //     console.log('Existing trainee check:', existingTrainee);
+ //     if (existingTrainee.length === 0) {
+ //       console.error('Trainee not found with ID:', id);
+ //       return NextResponse.json({ error: 'Trainee not found' }, { status: 404 });
+ //     }
+ //     console.log('About to execute UPDATE with values:', [bank_name, account_number, account_name, bvn, id]);
+ //     // Update bank details in the trainees table
+ //     const result = await pool.query(
+ //       `UPDATE trainees SET 
+ //        bank_name = ?, account_number = ?, account_name = ?, bvn = ?
+ //        WHERE id = ?`,
+ //       [bank_name, account_number, account_name, bvn, id]
+ //     );
+ //     console.log('Update result:', JSON.stringify(result[0], null, 2));
+ //     if (result[0].affectedRows === 0) {
+ //       console.error('No rows were affected by the update');
+ //       return NextResponse.json({ error: 'Failed to update trainee' }, { status: 500 });
+ //     }
+ //     console.log('Bank details updated successfully for trainee:', id);
+ //     return NextResponse.json({ message: 'Bank details updated successfully' }, { status: 200 });
+ //   } catch (error) {
+ //     console.error('Update bank error:', error);
+ //     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+ //   }
+ // }
 }),
 
 };

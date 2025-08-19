@@ -217,13 +217,13 @@ const __TURBOPACK__default__export__ = pool;
 "use strict";
 
 __turbopack_context__.s({
-    "PUT": ()=>PUT
+    "POST": ()=>POST
 });
 var __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/node_modules/next/server.js [app-route] (ecmascript)");
 var __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__ = __turbopack_context__.i("[project]/src/lib/db.js [app-route] (ecmascript)");
 ;
 ;
-async function PUT(request, { params }) {
+async function POST(request, { params }) {
     try {
         const data = await request.json();
         const connection = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].getConnection();
@@ -232,12 +232,12 @@ async function PUT(request, { params }) {
             // Update bank info
             await connection.query(`UPDATE trainees SET 
         bank_name = ?, account_number = ?, account_name = ?, bvn = ?
-        WHERE trainee_id = ?`, [
+        WHERE id = ?`, [
                 data.bank_name,
                 data.account_number,
                 data.account_name,
                 data.bvn,
-                id
+                data.traineeId
             ]);
             await connection.commit();
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({

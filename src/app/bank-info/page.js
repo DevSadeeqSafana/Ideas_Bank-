@@ -29,7 +29,7 @@ export default function BankInfoPage() {
       });
       
       // Also ensure traineeId is stored if not already
-      const traineeId = localStorage.getItem('traineeId');
+      const traineeId = localStorage.getItem('traineeid');
       if (!traineeId) {
         const id = parsed.ID || parsed.id;
         if (id) {
@@ -63,32 +63,28 @@ export default function BankInfoPage() {
   };
 
   try {
-    const response = await fetch('/api/bank', {
+    const response = await fetch('/api/trainee', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
-    if (response.ok) {
-      const data = await response.json();
-      
-      // Update localStorage with the submitted bank data
-      const existingData = JSON.parse(localStorage.getItem("data") || "{}");
-      const updatedData = {
-        ...existingData,
-        bank_name: formData.bank_name,
-        account_number: formData.account_number,
-        account_name: formData.account_name,
-        bvn: formData.bvn
-      };
-      localStorage.setItem("data", JSON.stringify(updatedData));
-      
-      router.push(`/verify-info?traineeId=${traineeId}`);
-    } else {
+    if (!response.ok) {
       const text = await response.text();
-      setError(`Failed to save bank details: ${text}`);
-      console.error('Submission failed:', text);
+      console.error('API error:', text);
+      return;
     }
+
+    const data = await response.json();
+
+    if (response.ok) {
+    localStorage.setItem("data", JSON.stringify(data?.info));
+    console.log(formData)
+    router.push(`/verify-info?traineeId=${traineeId}`);
+  } else {
+    const errorData = await response.json();
+    console.error('Submission failed:', errorData);
+  }
   } catch (error) {
     console.error('Error:', error);
   }

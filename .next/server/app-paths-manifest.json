@@ -4,6 +4,7 @@
   "/api/bank/route": "app/api/bank/route.js",
   "/api/internship/route": "app/api/internship/route.js",
   "/api/trainee/[id]/route": "app/api/trainee/[id]/route.js",
+  "/api/trainee/route": "app/api/trainee/route.js",
   "/bank-info/page": "app/bank-info/page.js",
   "/favicon.ico/route": "app/favicon.ico/route.js",
   "/internship-info/page": "app/internship-info/page.js",

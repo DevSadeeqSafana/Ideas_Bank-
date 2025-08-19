@@ -165,7 +165,7 @@ function BankInfoPage() {
                 trainee_id: parsed.trainee_id || parsed.ID || parsed.id || ""
             });
             // Also ensure traineeId is stored if not already
-            const traineeId = localStorage.getItem('traineeId');
+            const traineeId = localStorage.getItem('traineeid');
             if (!traineeId) {
                 const id = parsed.ID || parsed.id;
                 if (id) {
@@ -196,30 +196,26 @@ function BankInfoPage() {
             traineeId: Number(traineeId)
         };
         try {
-            const response = await fetch('/api/bank', {
+            const response = await fetch('/api/trainee', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(payload)
             });
+            if (!response.ok) {
+                const text = await response.text();
+                console.error('API error:', text);
+                return;
+            }
+            const data = await response.json();
             if (response.ok) {
-                const data = await response.json();
-                // Update localStorage with the submitted bank data
-                const existingData = JSON.parse(localStorage.getItem("data") || "{}");
-                const updatedData = {
-                    ...existingData,
-                    bank_name: formData.bank_name,
-                    account_number: formData.account_number,
-                    account_name: formData.account_name,
-                    bvn: formData.bvn
-                };
-                localStorage.setItem("data", JSON.stringify(updatedData));
+                localStorage.setItem("data", JSON.stringify(data?.info));
+                console.log(formData);
                 router.push(`/verify-info?traineeId=${traineeId}`);
             } else {
-                const text = await response.text();
-                setError(`Failed to save bank details: ${text}`);
-                console.error('Submission failed:', text);
+                const errorData = await response.json();
+                console.error('Submission failed:', errorData);
             }
         } catch (error) {
             console.error('Error:', error);
@@ -240,7 +236,7 @@ function BankInfoPage() {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 107,
+                            lineNumber: 103,
                             columnNumber: 15
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -253,7 +249,7 @@ function BankInfoPage() {
                                             children: "BVN"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 113,
+                                            lineNumber: 109,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -266,13 +262,13 @@ function BankInfoPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 116,
+                                            lineNumber: 112,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 112,
+                                    lineNumber: 108,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -282,7 +278,7 @@ function BankInfoPage() {
                                             children: "Account Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 127,
+                                            lineNumber: 123,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -295,13 +291,13 @@ function BankInfoPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 130,
+                                            lineNumber: 126,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 126,
+                                    lineNumber: 122,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -311,7 +307,7 @@ function BankInfoPage() {
                                             children: "Bank Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 141,
+                                            lineNumber: 137,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -324,13 +320,13 @@ function BankInfoPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 144,
+                                            lineNumber: 140,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 140,
+                                    lineNumber: 136,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -340,7 +336,7 @@ function BankInfoPage() {
                                             children: "Account Number"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 156,
+                                            lineNumber: 152,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -353,19 +349,19 @@ function BankInfoPage() {
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 159,
+                                            lineNumber: 155,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 155,
+                                    lineNumber: 151,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 111,
+                            lineNumber: 107,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FormNavigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["default"], {
@@ -375,28 +371,28 @@ function BankInfoPage() {
                             onBack: ()=>router.back()
                         }, void 0, false, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 172,
+                            lineNumber: 168,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/bank-info/page.js",
-                    lineNumber: 105,
+                    lineNumber: 101,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/bank-info/page.js",
-                lineNumber: 101,
+                lineNumber: 97,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/bank-info/page.js",
-            lineNumber: 100,
+            lineNumber: 96,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/bank-info/page.js",
-        lineNumber: 99,
+        lineNumber: 95,
         columnNumber: 5
     }, this);
 }
