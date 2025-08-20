@@ -1,7 +1,5 @@
 {
-  "/_not-found/page": "app/_not-found/page.js",
   "/api/auth/route": "app/api/auth/route.js",
-  "/api/bank/route": "app/api/bank/route.js",
   "/api/internship/route": "app/api/internship/route.js",
   "/api/trainee/[id]/route": "app/api/trainee/[id]/route.js",
   "/api/trainee/route": "app/api/trainee/route.js",
@@ -10,7 +8,7 @@
   "/internship-info/page": "app/internship-info/page.js",
   "/login/page": "app/login/page.js",
   "/page": "app/page.js",
-  "/personal-info/[id]/page": "app/personal-info/[id]/page.js",
+  "/personal-info/page": "app/personal-info/page.js",
   "/thank-you/page": "app/thank-you/page.js",
   "/verify-info/page": "app/verify-info/page.js"
 }

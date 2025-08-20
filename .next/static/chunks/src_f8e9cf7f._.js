@@ -134,80 +134,48 @@ var _s = __turbopack_context__.k.signature();
 ;
 function VerifyInfoContent() {
     _s();
-    const searchParams = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"])();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const traineeId = searchParams.get('traineeId');
-    const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
-        date_of_birth: '',
-        nin: ''
-    });
-    const [traineeData, setTraineeData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(null);
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+    const [nin, setnin] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [dob, setdob] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [error, seterror] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [formData, setFormData] = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].useState(null);
+    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].useEffect({
         "VerifyInfoContent.useEffect": ()=>{
-            if (router && traineeId) {
-                fetch("/api/trainee/".concat(traineeId)).then({
-                    "VerifyInfoContent.useEffect": (res)=>res.json()
-                }["VerifyInfoContent.useEffect"]).then({
-                    "VerifyInfoContent.useEffect": (data)=>{
-                        setTraineeData(data);
-                        setFormData({
-                            date_of_birth: data.date_of_birth || '',
-                            nin: data.nin || ''
-                        });
-                    }
-                }["VerifyInfoContent.useEffect"]).catch({
-                    "VerifyInfoContent.useEffect": (err)=>console.error("Failed to load trainee data:", err)
-                }["VerifyInfoContent.useEffect"]);
-            }
+            const info = JSON.parse(localStorage.getItem("data"));
+            setFormData(info);
+            setnin((formData === null || formData === void 0 ? void 0 : formData.nin) ? formData === null || formData === void 0 ? void 0 : formData.nin : "");
+            setdob((formData === null || formData === void 0 ? void 0 : formData.date_of_birth) ? formData === null || formData === void 0 ? void 0 : formData.date_of_birth : "");
         }
-    }["VerifyInfoContent.useEffect"], [
-        router,
-        traineeId
-    ]);
-    const handleChange = (e)=>{
-        const { name, value } = e.target;
-        setFormData((prev)=>({
-                ...prev,
-                [name]: value
-            }));
-    };
+    }["VerifyInfoContent.useEffect"], []);
     const handleSubmit = async (e)=>{
         e.preventDefault();
+        if (!nin || !dob) {
+            seterror("Please fill the form properly");
+            return;
+        }
         try {
-            const response = await fetch("/api/trainee/".concat(traineeId), {
-                method: 'PUT',
+            const response = await fetch("/api/trainee", {
+                method: "PUT",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify(formData)
+                body: JSON.stringify({
+                    date_of_birth: dob,
+                    nin: nin,
+                    id: formData.id
+                })
             });
             if (response.ok) {
-                router.push("/internship-info?traineeId=".concat(traineeId));
+                // Update global state with the submitted data
+                router.push("/internship-info");
             } else {
                 const error = await response.text();
                 console.error("Submission failed:", error);
             }
         } catch (error) {
-            console.error('Error submitting form:', error);
+            console.error("Error submitting form:", error);
         }
     };
-    if (!traineeData) {
-        return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
-            className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-300 via-pink-200 to-blue-200",
-            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
-                className: "text-lg font-medium text-gray-700",
-                children: "Loading..."
-            }, void 0, false, {
-                fileName: "[project]/src/app/verify-info/page.js",
-                lineNumber: 65,
-                columnNumber: 9
-            }, this)
-        }, void 0, false, {
-            fileName: "[project]/src/app/verify-info/page.js",
-            lineNumber: 64,
-            columnNumber: 7
-        }, this);
-    }
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
         className: "min-h-screen bg-gradient-to-br from-purple-300 via-pink-200 to-blue-200 flex items-center justify-center px-4 font-inter",
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -218,6 +186,14 @@ function VerifyInfoContent() {
                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
                     onSubmit: handleSubmit,
                     children: [
+                        error && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                            className: "mb-4 p-3 bg-red-100/60 border border-red-300 rounded-xl text-red-700 text-sm",
+                            children: error
+                        }, void 0, false, {
+                            fileName: "[project]/src/app/verify-info/page.js",
+                            lineNumber: 57,
+                            columnNumber: 15
+                        }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             className: "grid grid-cols-1 md:grid-cols-2 gap-6 mb-8",
                             children: [
@@ -228,25 +204,25 @@ function VerifyInfoContent() {
                                             children: "Date of Birth"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 80,
+                                            lineNumber: 63,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "date",
                                             name: "date_of_birth",
-                                            value: formData.date_of_birth,
-                                            onChange: handleChange,
+                                            value: dob,
+                                            onChange: (r)=>setdob(r.target.value),
                                             className: "w-full px-4 py-2 rounded-xl bg-white/40 text-black placeholder-gray-200 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 83,
+                                            lineNumber: 66,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 79,
+                                    lineNumber: 62,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -256,31 +232,31 @@ function VerifyInfoContent() {
                                             children: "National Identification Number"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 94,
+                                            lineNumber: 77,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "text",
                                             name: "nin",
-                                            value: formData.nin,
-                                            onChange: handleChange,
+                                            value: nin,
+                                            onChange: (e)=>setnin(e.target.value),
                                             className: "w-full px-4 py-2 rounded-xl bg-white/40 text-black placeholder-gray-600 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 97,
+                                            lineNumber: 80,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 93,
+                                    lineNumber: 76,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/verify-info/page.js",
-                            lineNumber: 78,
+                            lineNumber: 61,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -291,7 +267,7 @@ function VerifyInfoContent() {
                                     children: "Personal Information"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 109,
+                                    lineNumber: 92,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -301,15 +277,15 @@ function VerifyInfoContent() {
                                             children: "Name:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 110,
-                                            columnNumber: 18
+                                            lineNumber: 96,
+                                            columnNumber: 17
                                         }, this),
                                         " ",
-                                        traineeData.fullname
+                                        formData === null || formData === void 0 ? void 0 : formData.fullname
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 110,
+                                    lineNumber: 95,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -319,15 +295,15 @@ function VerifyInfoContent() {
                                             children: "Email:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 111,
-                                            columnNumber: 18
+                                            lineNumber: 102,
+                                            columnNumber: 17
                                         }, this),
                                         " ",
-                                        traineeData.email
+                                        formData === null || formData === void 0 ? void 0 : formData.email
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 111,
+                                    lineNumber: 101,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -337,21 +313,21 @@ function VerifyInfoContent() {
                                             children: "Phone:"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/verify-info/page.js",
-                                            lineNumber: 112,
-                                            columnNumber: 18
+                                            lineNumber: 108,
+                                            columnNumber: 17
                                         }, this),
                                         " ",
-                                        traineeData.phone
+                                        formData === null || formData === void 0 ? void 0 : formData.phone
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/verify-info/page.js",
-                                    lineNumber: 112,
+                                    lineNumber: 107,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/verify-info/page.js",
-                            lineNumber: 108,
+                            lineNumber: 91,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FormNavigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -367,28 +343,27 @@ function VerifyInfoContent() {
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/verify-info/page.js",
-                    lineNumber: 77,
+                    lineNumber: 55,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/verify-info/page.js",
-                lineNumber: 73,
+                lineNumber: 51,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/verify-info/page.js",
-            lineNumber: 72,
+            lineNumber: 50,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/verify-info/page.js",
-        lineNumber: 71,
+        lineNumber: 49,
         columnNumber: 5
     }, this);
 }
-_s(VerifyInfoContent, "tHTQg7hQYTy49z/5ZauXo8Xuckc=", false, function() {
+_s(VerifyInfoContent, "27Sh+pBtJoQKRBFe4NOrfzXPui4=", false, function() {
     return [
-        __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useSearchParams"],
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
 });
@@ -402,17 +377,17 @@ function VerifyInfoPage() {
                 children: "Loading..."
             }, void 0, false, {
                 fileName: "[project]/src/app/verify-info/page.js",
-                lineNumber: 132,
-                columnNumber: 9
+                lineNumber: 133,
+                columnNumber: 11
             }, void 0)
         }, void 0, false, {
             fileName: "[project]/src/app/verify-info/page.js",
-            lineNumber: 131,
-            columnNumber: 7
+            lineNumber: 132,
+            columnNumber: 9
         }, void 0),
         children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(VerifyInfoContent, {}, void 0, false, {
             fileName: "[project]/src/app/verify-info/page.js",
-            lineNumber: 135,
+            lineNumber: 137,
             columnNumber: 7
         }, this)
     }, void 0, false, {

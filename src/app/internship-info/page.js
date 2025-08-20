@@ -1,124 +1,169 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useMemo, Suspense } from "react";
 import { useRouter } from "next/navigation";
 import FormWrapper from "@/components/FormWrapper";
 import FormNavigation from "@/components/FormNavigation";
+import SearchableSelect from "@/components/SearchableSelect";
 import { motion } from "framer-motion";
+import statesAndLGAs from "@/lib/nigeria-state-and-lgas.json";
 
-export default function InternshipInfoPage() {
+function InternshipInfoContent() {
   const router = useRouter();
-  const [traineeId, setTraineeId] = useState("");
-  const [acceptanceFile, setAcceptanceFile] = useState(null);
-  const [completionFile, setCompletionFile] = useState(null);
+  const [acceptanceFile, setAcceptanceFile] = useState("");
+  const [start, setstart] = useState(false);
+  const [completed, setcompleted] = useState(false);
+  const [state, setstate] = useState("");
+  const [lga, setlga] = useState("");
+  const [completionFile, setCompletionFile] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isUploadingAcceptance, setIsUploadingAcceptance] = useState(false);
+  const [isUploadingCompletion, setIsUploadingCompletion] = useState(false);
   const [error, setError] = useState("");
-  const [formData, setFormData] = useState({
-    has_started_internship: false,
-    internship_letter_url: "",
-    has_completed_internship: false,
-    completion_letter_url: "",
-    state_of_internship: "",
-    LGA_of_internship: "",
-  });
 
-  useEffect(() => {
-    // Try multiple sources for traineeId
-    const storedTraineeId = sessionStorage.getItem("traineeId") || localStorage.getItem("traineeId");
-    
-    if (storedTraineeId) {
-      setTraineeId(storedTraineeId);
-    } else {
-      // Fallback: try to get from stored data
-      const data = localStorage.getItem("data");
-      if (data) {
-        const parsed = JSON.parse(data);
-        const id = parsed.SN || parsed.sn;
-        if (id) {
-          setTraineeId(String(id));
-          localStorage.setItem("traineeId", String(id));
-        }
-      }
-    }
+  const [formData, setFormData] = React.useState(null);
+  React.useEffect(() => {
+    const info = JSON.parse(localStorage.getItem("data"));
+    setstart(
+      info?.has_started_internship ? info?.has_started_internship : false
+    );
+    setcompleted(
+      info?.has_completed_internship ? info?.has_completed_internship : false
+    );
+    setstate(info?.state_of_internship ? info?.state_of_internship : "");
+    setlga(info?.LGA_of_internship ? info?.LGA_of_internship : "");
+    setFormData(info);
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  // Extract states and LGAs from the JSON data
+  const states = useMemo(() => {
+    return statesAndLGAs.map((item) => item.state).sort();
+  }, []);
 
-  const handleFileChange = (e, fileType) => {
+  const availableLGAs = useMemo(() => {
+    if (!state) return [];
+    const selectedState = statesAndLGAs.find(
+      (item) => item.state === state
+    );
+    return selectedState ? selectedState.lgas.sort() : [];
+  }, [state]);
+
+  const handleFileChange = async (e, fileType) => {
     const file = e.target.files[0];
-    
+
     if (file) {
-      const maxSize = 5 * 1024 * 1024; // 5MB
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'application/pdf'];
-      
-      if (file.size > maxSize) {
-        setError(`File size must be less than 5MB`);
-        e.target.value = '';
-        return;
-      }
-      
+      const allowedTypes = [
+        "image/jpeg",
+        "image/jpg",
+        "image/png",
+        "image/gif",
+        "application/pdf",
+      ];
+      const imageTypes = ["image/jpeg", "image/jpg", "image/png", "image/gif"];
+
       if (!allowedTypes.includes(file.type)) {
         setError(`Invalid file type. Please upload an image or PDF`);
-        e.target.value = '';
+        e.target.value = "";
         return;
       }
-      
+
       setError("");
-      
-      if (fileType === "acceptance") {
-        setAcceptanceFile(file);
-      } else if (fileType === "completion") {
-        setCompletionFile(file);
+
+      // Check if file is an image
+      if (imageTypes.includes(file.type)) {
+        try {
+          // Set loading state based on file type
+          if (fileType === "acceptance") {
+            setIsUploadingAcceptance(true);
+          } else if (fileType === "completion") {
+            setIsUploadingCompletion(true);
+          }
+
+          // Send POST request to backend
+          const formData = new FormData();
+          formData.append("photo", file);
+
+          const response = await fetch("https://backend.cosmopolitan.edu.ng", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+
+            // Store the response based on file type
+            if (fileType === "acceptance") {
+              setAcceptanceFile(data.link);
+            } else if (fileType === "completion") {
+              setCompletionFile(data.link);
+            }
+          } else {
+            setError("Failed to upload image. Please try again.");
+            e.target.value = "";
+          }
+        } catch (error) {
+          console.error("Error uploading image:", error);
+          setError("Network error while uploading image. Please try again.");
+          e.target.value = "";
+        } finally {
+          // Clear loading state
+          if (fileType === "acceptance") {
+            setIsUploadingAcceptance(false);
+          } else if (fileType === "completion") {
+            setIsUploadingCompletion(false);
+          }
+        }
+      } else {
+        // If it's a PDF, handle as before
+        if (fileType === "acceptance") {
+          setAcceptanceFile(file.link);
+        } else if (fileType === "completion") {
+          setCompletionFile(file.link);
+        }
       }
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
+    // Try to get trainee ID from URL params first, then fallback to stored data
+
+    const traineeId = formData.id;
+
     if (!traineeId) {
       setError("Trainee ID not found. Please log in again.");
       return;
     }
-    
-    if (!formData.state_of_internship || !formData.LGA_of_internship) {
+
+    if (!state || !lga) {
       setError("Please fill in all required fields");
       return;
     }
-    
-    if (formData.has_started_internship && !acceptanceFile && !formData.internship_letter_url) {
-      setError("Please upload or provide URL for acceptance letter");
-      return;
-    }
-    
-    if (formData.has_completed_internship && !completionFile && !formData.completion_letter_url) {
-      setError("Please upload or provide URL for completion letter");
-      return;
-    }
 
+    if (start || completed) {
+      if (start && !acceptanceFile) {
+        setError("Please upload or provide URL for acceptance letter");
+        return;
+      }
+    }
     setIsLoading(true);
     setError("");
 
     try {
       const submitFormData = new FormData();
       submitFormData.append("traineeId", traineeId);
-      submitFormData.append("has_started_internship", formData.has_started_internship);
-      submitFormData.append("has_completed_internship", formData.has_completed_internship);
-      submitFormData.append("state_of_internship", formData.state_of_internship);
-      submitFormData.append("LGA_of_internship", formData.LGA_of_internship);
-      submitFormData.append("internship_letter_url", formData.internship_letter_url);
-      submitFormData.append("completion_letter_url", formData.completion_letter_url);
-      
+      submitFormData.append("has_started_internship", start);
+      submitFormData.append("has_completed_internship", completed);
+      submitFormData.append("state_of_internship", state);
+      submitFormData.append("LGA_of_internship", lga);
+      submitFormData.append("internship_letter_url", acceptanceFile);
+      submitFormData.append("completion_letter_url", completionFile);
+
       if (acceptanceFile) {
         submitFormData.append("acceptancePhoto", acceptanceFile);
       }
-      
+
       if (completionFile) {
         submitFormData.append("completionPhoto", completionFile);
       }
@@ -132,7 +177,9 @@ export default function InternshipInfoPage() {
         router.push("/thank-you");
       } else {
         const errorData = await response.json();
-        setError(errorData.error || "An error occurred while submitting the form");
+        setError(
+          errorData.error || "An error occurred while submitting the form"
+        );
       }
     } catch (error) {
       console.error("Error:", error);
@@ -161,7 +208,6 @@ export default function InternshipInfoPage() {
               </div>
             )}
             <div className="space-y-6 mb-8">
-
               {/* Aligned checkboxes */}
               <div className="flex flex-col md:flex-row md:space-x-8 space-y-4 md:space-y-0 items-start md:items-center">
                 <div className="flex items-center space-x-3">
@@ -169,11 +215,14 @@ export default function InternshipInfoPage() {
                     type="checkbox"
                     id="has_started_internship"
                     name="has_started_internship"
-                    checked={formData.has_started_internship}
-                    onChange={handleChange}
+                    checked={start}
+                    onChange={(r) => setstart(r.target.value)}
                     className="w-3 h-3 text-blue-600 bg-white border border-gray-300 rounded focus:ring-1 focus:ring-gray-400"
                   />
-                  <label htmlFor="has_started_internship" className="text-gray-800 text-sm font-small">
+                  <label
+                    htmlFor="has_started_internship"
+                    className="text-gray-800 text-sm font-small"
+                  >
                     I have started my internship
                   </label>
                 </div>
@@ -183,17 +232,20 @@ export default function InternshipInfoPage() {
                     type="checkbox"
                     id="has_completed_internship"
                     name="has_completed_internship"
-                    checked={formData.has_completed_internship}
-                    onChange={handleChange}
+                    checked={completed}
+                    onChange={r=>setcompleted(r.target.value)}
                     className="w-3 h-3 text-blue-600 bg-white border border-gray-300 rounded focus:ring-1 focus:ring-gray-400"
                   />
-                  <label htmlFor="has_completed_internship" className="text-gray-800 text-sm font-small">
+                  <label
+                    htmlFor="has_completed_internship"
+                    className="text-gray-800 text-sm font-small"
+                  >
                     I have completed my internship
                   </label>
                 </div>
               </div>
 
-              {formData.has_started_internship && (
+              {start && (
                 <>
                   <div>
                     <label className="block text-gray-800 text-sm mb-2 font-small">
@@ -203,10 +255,18 @@ export default function InternshipInfoPage() {
                       type="file"
                       accept="image/*,.pdf"
                       onChange={(e) => handleFileChange(e, "acceptance")}
-                      className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                      disabled={isUploadingAcceptance}
+                      className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    {acceptanceFile && (
-                      <p className="text-sm text-gray-600 mt-1">Selected: {acceptanceFile.name}</p>
+                    {isUploadingAcceptance && (
+                      <p className="text-sm text-blue-600 mt-1 animate-pulse">
+                        Uploading acceptance letter...
+                      </p>
+                    )}
+                    {acceptanceFile && !isUploadingAcceptance && (
+                      <p className="text-sm text-green-600 mt-1">
+                        ✓ Acceptance letter uploaded successfully
+                      </p>
                     )}
                   </div>
                   <div>
@@ -215,9 +275,8 @@ export default function InternshipInfoPage() {
                     </label>
                     <input
                       type="text"
-                      name="internship_letter_url"
-                      value={formData.internship_letter_url}
-                      onChange={handleChange}
+                      readOnly
+                      value={acceptanceFile}
                       placeholder="https://example.com/acceptance-letter"
                       className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition"
                     />
@@ -225,7 +284,7 @@ export default function InternshipInfoPage() {
                 </>
               )}
 
-              {formData.has_completed_internship && (
+              {completed && (
                 <>
                   <div>
                     <label className="block text-gray-800 text-sm mb-2 font-small">
@@ -235,10 +294,18 @@ export default function InternshipInfoPage() {
                       type="file"
                       accept="image/*,.pdf"
                       onChange={(e) => handleFileChange(e, "completion")}
-                      className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100"
+                      disabled={isUploadingCompletion}
+                      className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-50 file:text-purple-700 hover:file:bg-purple-100 disabled:opacity-50 disabled:cursor-not-allowed"
                     />
-                    {completionFile && (
-                      <p className="text-sm text-gray-600 mt-1">Selected: {completionFile.name}</p>
+                    {isUploadingCompletion && (
+                      <p className="text-sm text-blue-600 mt-1 animate-pulse">
+                        Uploading completion letter...
+                      </p>
+                    )}
+                    {completionFile && !isUploadingCompletion && (
+                      <p className="text-sm text-green-600 mt-1">
+                        ✓ Completion letter uploaded successfully
+                      </p>
                     )}
                   </div>
                   <div>
@@ -247,9 +314,8 @@ export default function InternshipInfoPage() {
                     </label>
                     <input
                       type="text"
-                      name="completion_letter_url"
-                      value={formData.completion_letter_url}
-                      onChange={handleChange}
+                      readOnly
+                      value={completionFile}
                       placeholder="https://example.com/completion-letter"
                       className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition"
                     />
@@ -261,33 +327,33 @@ export default function InternshipInfoPage() {
                 <label className="block text-gray-800 text-sm mb-2 font-small">
                   State of Internship
                 </label>
-                <select
+                <SearchableSelect
+                  options={states}
+                  value={state}
+                  onChange={(r) => setstate(r.target.value)}
                   name="state_of_internship"
-                  value={formData.state_of_internship}
-                  onChange={handleChange}
-                  className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition"
+                  placeholder="Select state..."
+                  searchPlaceholder="Search states..."
                   required
-                >
-                  <option value="">Select State</option>
-                  <option value="Lagos">Lagos</option>
-                  <option value="Abuja">Abuja</option>
-                  <option value="Kano">Kano</option>
-                  <option value="Enugu">Enugu</option>
-                  {/* Add more states as needed */}
-                </select>
+                />
               </div>
 
               <div>
                 <label className="block text-gray-800 text-sm mb-2 font-small">
                   LGA of Internship
                 </label>
-                <input
-                  type="text"
+                <SearchableSelect
+                  options={availableLGAs}
+                  value={lga}
+                  onChange={e=> setlga(e.target.value)}
                   name="LGA_of_internship"
-                  value={formData.LGA_of_internship}
-                  onChange={handleChange}
-                  placeholder="e.g., Bwari"
-                  className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-gray-300 focus:ring-1 focus:ring-gray-400 transition"
+                  placeholder={
+                    state
+                      ? "Select LGA..."
+                      : "Select state first"
+                  }
+                  searchPlaceholder="Search LGAs..."
+                  disabled={!state}
                   required
                 />
               </div>
@@ -305,5 +371,19 @@ export default function InternshipInfoPage() {
         </FormWrapper>
       </motion.div>
     </div>
+  );
+}
+
+export default function InternshipInfoPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-200 via-pink-100 to-blue-200">
+          <p className="text-lg font-medium text-gray-700">Loading...</p>
+        </div>
+      }
+    >
+      <InternshipInfoContent />
+    </Suspense>
   );
 }

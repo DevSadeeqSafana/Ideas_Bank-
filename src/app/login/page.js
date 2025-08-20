@@ -5,9 +5,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
-  const [registrationno, setRegistrationNo] = useState("IDEAS/IGF/ABJ/AIPIL/DAI/00001");
+  const [registrationno, setRegistrationNo] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +26,7 @@ export default function LoginPage() {
 
       if (response.ok) {
         localStorage.setItem("data", JSON.stringify(data?.info));
-        router.push(`/personal-info/${data.traineeId}`);
+        router.push(`/personal-info`);
       } else {
         setError(data.error || "Login failed");
       }
@@ -58,6 +60,7 @@ export default function LoginPage() {
             <input
               id="email"
               type="text"
+              placeholder="IDEAS/IGF/ABJ/AIPIL/DAI/00011"
               value={registrationno}
               onChange={(e) => setRegistrationNo(e.target.value)}
               className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-transparent focus:ring-2 focus:ring-blue-400 transition"

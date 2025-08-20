@@ -1,8 +1,23 @@
 "use client";
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import { useEffect } from 'react';
+import { useUserInfo } from '@/hooks/useUserInfo';
 
 export default function WelcomePage() {
+  const { clearUserInfo } = useUserInfo();
+
+  useEffect(() => {
+    // Clear all user data and traineeId from localStorage when landing on home page
+    clearUserInfo();
+    
+    // Also directly clear localStorage items to ensure complete reset
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('data');
+      localStorage.removeItem('traineeId');
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-200 via-pink-100 to-blue-200 flex items-center justify-center p-6 font-inter">
       <motion.div

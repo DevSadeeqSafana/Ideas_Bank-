@@ -234,8 +234,8 @@ async function POST(request) {
         const traineeId = formData.get('traineeId');
         const acceptanceFile = formData.get('acceptancePhoto');
         const completionFile = formData.get('completionPhoto');
-        let internship_letter_url = formData.get('internship_letter_url') || '';
-        let completion_letter_url = formData.get('completion_letter_url') || '';
+        let internship_letter_url = formData.get('acceptancePhoto') || '';
+        let completion_letter_url = formData.get('completionPhoto') || '';
         if (!traineeId) {
             return __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$server$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["NextResponse"].json({
                 error: 'Trainee ID is required'
@@ -243,45 +243,6 @@ async function POST(request) {
                 status: 400
             });
         }
-        if (has_started_internship && acceptanceFile && acceptanceFile.size > 0) {
-            const acceptanceFormData = new FormData();
-            acceptanceFormData.append('photo', acceptanceFile);
-            try {
-                const uploadResponse = await fetch('https://backend.cosmopolitan.edu.ng', {
-                    method: 'POST',
-                    body: acceptanceFormData
-                });
-                if (uploadResponse.ok) {
-                    const uploadResult = await uploadResponse.json();
-                    internship_letter_url = uploadResult.url || internship_letter_url;
-                }
-            } catch (uploadError) {
-                console.error('Acceptance letter upload error:', uploadError);
-            }
-        }
-        if (has_completed_internship && completionFile && completionFile.size > 0) {
-            const completionFormData = new FormData();
-            completionFormData.append('photo', completionFile);
-            try {
-                const uploadResponse = await fetch('https://backend.cosmopolitan.edu.ng', {
-                    method: 'POST',
-                    body: completionFormData
-                });
-                if (uploadResponse.ok) {
-                    const uploadResult = await uploadResponse.json();
-                    completion_letter_url = uploadResult.url || completion_letter_url;
-                }
-            } catch (uploadError) {
-                console.error('Completion letter upload error:', uploadError);
-            }
-        }
-        console.log('Internship data received:', {
-            has_started_internship,
-            has_completed_internship,
-            state_of_internship,
-            LGA_of_internship,
-            traineeId
-        });
         // Update internship details in the trainees table
         const result = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$db$2e$js__$5b$app$2d$route$5d$__$28$ecmascript$29$__["default"].query(`UPDATE trainees SET 
       has_started_internship = ?, 

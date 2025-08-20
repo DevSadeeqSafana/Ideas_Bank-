@@ -20,7 +20,7 @@ var _s = __turbopack_context__.k.signature();
 ;
 function LoginPage() {
     _s();
-    const [registrationno, setRegistrationNo] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("IDEAS/IGF/ABJ/AIPIL/DAI/00001");
+    const [registrationno, setRegistrationNo] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
     const handleSubmit = async (e)=>{
@@ -39,7 +39,7 @@ function LoginPage() {
             const data = await response.json();
             if (response.ok) {
                 localStorage.setItem("data", JSON.stringify(data === null || data === void 0 ? void 0 : data.info));
-                router.push("/personal-info/".concat(data.traineeId));
+                router.push("/personal-info");
             } else {
                 setError(data.error || "Login failed");
             }
@@ -68,7 +68,7 @@ function LoginPage() {
                     children: "Welcome Back"
                 }, void 0, false, {
                     fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 44,
+                    lineNumber: 46,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -76,7 +76,7 @@ function LoginPage() {
                     children: "Enter your credentials to continue"
                 }, void 0, false, {
                     fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 45,
+                    lineNumber: 47,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("form", {
@@ -87,7 +87,7 @@ function LoginPage() {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 49,
+                            lineNumber: 51,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -99,25 +99,26 @@ function LoginPage() {
                                     children: "Registration Number"
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/login/page.js",
-                                    lineNumber: 55,
+                                    lineNumber: 57,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                     id: "email",
                                     type: "text",
+                                    placeholder: "IDEAS/IGF/ABJ/AIPIL/DAI/00011",
                                     value: registrationno,
                                     onChange: (e)=>setRegistrationNo(e.target.value),
                                     className: "w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-transparent focus:ring-2 focus:ring-blue-400 transition",
                                     required: true
                                 }, void 0, false, {
                                     fileName: "[project]/src/app/login/page.js",
-                                    lineNumber: 58,
+                                    lineNumber: 60,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 54,
+                            lineNumber: 56,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("button", {
@@ -126,28 +127,28 @@ function LoginPage() {
                             children: "Continue"
                         }, void 0, false, {
                             fileName: "[project]/src/app/login/page.js",
-                            lineNumber: 67,
+                            lineNumber: 70,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/login/page.js",
-                    lineNumber: 47,
+                    lineNumber: 49,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/src/app/login/page.js",
-            lineNumber: 38,
+            lineNumber: 40,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/login/page.js",
-        lineNumber: 37,
+        lineNumber: 39,
         columnNumber: 5
     }, this);
 }
-_s(LoginPage, "KIpJf/IBJAvEfWWHyA19okKmivo=", false, function() {
+_s(LoginPage, "YnTW11RKEE1wSARr5Er8WVJ8dgY=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];

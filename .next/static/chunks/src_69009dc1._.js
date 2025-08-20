@@ -132,85 +132,69 @@ var _s = __turbopack_context__.k.signature();
 ;
 ;
 ;
-function BankInfoPage() {
+function BankInfoContent() {
     _s();
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"])();
-    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])('');
-    const [formData, setFormData] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
-        bank_name: '',
-        account_number: '',
-        account_name: '',
-        bvn: '',
-        trainee_id: ''
-    });
-    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
-        "BankInfoPage.useEffect": ()=>{
-            const data = localStorage.getItem("data");
-            if (data) {
-                const parsed = JSON.parse(data);
-                setFormData({
-                    bank_name: parsed.bank_name || '',
-                    account_number: parsed.account_number || '',
-                    account_name: parsed.account_name || '',
-                    bvn: parsed.bvn || '',
-                    trainee_id: parsed.trainee_id || parsed.ID || parsed.id || ""
-                });
-                // Also ensure traineeId is stored if not already
-                const traineeId = localStorage.getItem('traineeid');
-                if (!traineeId) {
-                    const id = parsed.ID || parsed.id;
-                    if (id) {
-                        localStorage.setItem('traineeId', String(id));
-                    }
-                }
-            }
+    const [error, setError] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [bvn, setbvn] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [name, setname] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [bank, setbank] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [number, setnumber] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [formData, setFormData] = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].useState(null);
+    __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].useEffect({
+        "BankInfoContent.useEffect": ()=>{
+            const info = JSON.parse(localStorage.getItem("data"));
+            setbvn((info === null || info === void 0 ? void 0 : info.bvn) ? info === null || info === void 0 ? void 0 : info.bvn : "");
+            setname((info === null || info === void 0 ? void 0 : info.account_name) ? info === null || info === void 0 ? void 0 : info.account_name : "");
+            setbank((info === null || info === void 0 ? void 0 : info.bank_name) ? info === null || info === void 0 ? void 0 : info.bank_name : "");
+            setnumber((info === null || info === void 0 ? void 0 : info.account_number) ? info === null || info === void 0 ? void 0 : info.account_number : "");
+            setFormData(info);
         }
-    }["BankInfoPage.useEffect"], []);
-    const handleChange = (e)=>{
-        const { name, value } = e.target;
-        setFormData((prev)=>({
-                ...prev,
-                [name]: value
-            }));
-    };
+    }["BankInfoContent.useEffect"], []);
     const handleSubmit = async (e)=>{
         e.preventDefault();
-        setError('');
-        const traineeId = localStorage.getItem('traineeId') || formData.trainee_id;
+        setError("");
+        const traineeId = formData.id;
         if (!traineeId) {
-            setError('Trainee ID not found. Please login again.');
-            console.error('Trainee ID not found in localStorage or formData');
-            router.push('/login');
+            setError("Trainee ID not found. Please login again.");
+            console.error("Trainee ID not found in URL params or stored data");
+            router.push("/login");
             return;
         }
         const payload = {
-            ...formData,
+            bank_name: bank,
+            account_number: number,
+            account_name: name,
+            bvn: bvn,
             traineeId: Number(traineeId)
         };
+        if (!bank || !number || !name || !bvn) {
+            setError("Data not found. Please fill the form.");
+            return;
+        }
         try {
-            const response = await fetch('/api/trainee', {
-                method: 'POST',
+            const response = await fetch("/api/trainee", {
+                method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(payload)
             });
             if (!response.ok) {
                 const text = await response.text();
-                console.error('API error:', text);
+                setError(text);
                 return;
             }
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem("data", JSON.stringify(data === null || data === void 0 ? void 0 : data.info));
-                console.log(formData);
-                router.push("/verify-info?traineeId=".concat(traineeId));
+                // Update the stored data with the response
+                router.push("/verify-info");
             } else {
                 const errorData = await response.json();
-                console.error('Submission failed:', errorData);
+                console.error("Submission failed:", errorData);
             }
         } catch (error) {
-            console.error('Error:', error);
+            console.error("Error:", error);
         }
     };
     return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -228,7 +212,7 @@ function BankInfoPage() {
                             children: error
                         }, void 0, false, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 103,
+                            lineNumber: 86,
                             columnNumber: 15
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -241,26 +225,26 @@ function BankInfoPage() {
                                             children: "BVN"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 109,
+                                            lineNumber: 92,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "text",
                                             name: "bvn",
-                                            value: formData.bvn,
-                                            onChange: handleChange,
+                                            value: bvn,
+                                            onChange: (e)=>setbvn(e.target.value),
                                             // placeholder="e.g., 22334455667"
                                             className: "w-full px-4 py-2 rounded-xl bg-white/40 text-black placeholder-gray-600 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 112,
+                                            lineNumber: 95,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 108,
+                                    lineNumber: 91,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -270,26 +254,26 @@ function BankInfoPage() {
                                             children: "Account Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 123,
+                                            lineNumber: 106,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "text",
                                             name: "account_name",
-                                            value: formData.account_name,
-                                            onChange: handleChange,
+                                            value: name,
+                                            onChange: (e)=>setname(e.target.value),
                                             // placeholder="e.g., John Doe"
                                             className: "w-full px-4 py-2 rounded-xl bg-white/40 text-black placeholder-gray-600 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 126,
+                                            lineNumber: 109,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 122,
+                                    lineNumber: 105,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -299,26 +283,26 @@ function BankInfoPage() {
                                             children: "Bank Name"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 137,
+                                            lineNumber: 120,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "text",
                                             name: "bank_name",
-                                            value: formData.bank_name,
-                                            onChange: handleChange,
+                                            value: bank,
+                                            onChange: (e)=>setbank(e.target.value),
                                             // placeholder="e.g., Zenith Bank"
                                             className: "w-full px-4 py-2 rounded-xl ring-black bg-white/40 text-black placeholder-gray-600 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 140,
+                                            lineNumber: 123,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 136,
+                                    lineNumber: 119,
                                     columnNumber: 15
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -328,32 +312,32 @@ function BankInfoPage() {
                                             children: "Account Number"
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 152,
+                                            lineNumber: 135,
                                             columnNumber: 17
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
                                             type: "text",
                                             name: "account_number",
-                                            value: formData.account_number,
-                                            onChange: handleChange,
+                                            value: number,
+                                            onChange: (e)=>setnumber(e.target.value),
                                             // placeholder="e.g., 1234567890"
                                             className: "w-full px-4 py-2 rounded-xl bg-white/40 text-black placeholder-gray-600 outline-none border border-gray-300 focus:ring-2 focus:ring-gray-400 transition",
                                             required: true
                                         }, void 0, false, {
                                             fileName: "[project]/src/app/bank-info/page.js",
-                                            lineNumber: 155,
+                                            lineNumber: 138,
                                             columnNumber: 17
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/src/app/bank-info/page.js",
-                                    lineNumber: 151,
+                                    lineNumber: 134,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 107,
+                            lineNumber: 90,
                             columnNumber: 13
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$components$2f$FormNavigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"], {
@@ -363,39 +347,69 @@ function BankInfoPage() {
                             onBack: ()=>router.back()
                         }, void 0, false, {
                             fileName: "[project]/src/app/bank-info/page.js",
-                            lineNumber: 168,
+                            lineNumber: 150,
                             columnNumber: 13
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/src/app/bank-info/page.js",
-                    lineNumber: 101,
+                    lineNumber: 84,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/src/app/bank-info/page.js",
-                lineNumber: 97,
+                lineNumber: 80,
                 columnNumber: 9
             }, this)
         }, void 0, false, {
             fileName: "[project]/src/app/bank-info/page.js",
-            lineNumber: 96,
+            lineNumber: 79,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/src/app/bank-info/page.js",
-        lineNumber: 95,
+        lineNumber: 78,
         columnNumber: 5
     }, this);
 }
-_s(BankInfoPage, "m/1WXqbln+Q9xUZiN2khYCFdOXM=", false, function() {
+_s(BankInfoContent, "E/CgtiFPIDQV9TyGpDNRy6GpGb0=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRouter"]
     ];
 });
-_c = BankInfoPage;
-var _c;
-__turbopack_context__.k.register(_c, "BankInfoPage");
+_c = BankInfoContent;
+function BankInfoPage() {
+    return /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Suspense"], {
+        fallback: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+            className: "min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-300 via-pink-200 to-blue-200",
+            children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
+                className: "text-lg font-medium text-gray-700",
+                children: "Loading..."
+            }, void 0, false, {
+                fileName: "[project]/src/app/bank-info/page.js",
+                lineNumber: 168,
+                columnNumber: 11
+            }, void 0)
+        }, void 0, false, {
+            fileName: "[project]/src/app/bank-info/page.js",
+            lineNumber: 167,
+            columnNumber: 9
+        }, void 0),
+        children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(BankInfoContent, {}, void 0, false, {
+            fileName: "[project]/src/app/bank-info/page.js",
+            lineNumber: 172,
+            columnNumber: 7
+        }, this)
+    }, void 0, false, {
+        fileName: "[project]/src/app/bank-info/page.js",
+        lineNumber: 165,
+        columnNumber: 5
+    }, this);
+}
+_c1 = BankInfoPage;
+var _c, _c1;
+__turbopack_context__.k.register(_c, "BankInfoContent");
+__turbopack_context__.k.register(_c1, "BankInfoPage");
 if (typeof globalThis.$RefreshHelpers$ === 'object' && globalThis.$RefreshHelpers !== null) {
     __turbopack_context__.k.registerExports(module, globalThis.$RefreshHelpers$);
 }

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import pool from "@/lib/db";
 import { loginSchema } from "@/schema/auth";
 import { encrypt } from "@/lib/cryptoUtil";
+import { extractTraineeId, normalizeTraineeData } from "@/lib/traineeUtils";
 
 export async function POST(request) {
   try {
@@ -31,17 +32,21 @@ export async function POST(request) {
     const user = users[0];
     console.log("User data from DB:", user);
     
-    // Check different possible field names for the ID
-    const userId = user.SN || user.sn || user.id || user.trainee_sn;
+    // Use standardized trainee ID extraction
+    const userId = extractTraineeId(user);
     
     if (!userId) {
       console.error("No ID field found in user data:", Object.keys(user));
+      return NextResponse.json({ error: "Invalid user data - missing ID" }, { status: 500 });
     }
 
+    // Normalize the user data for consistent field mapping
+    const normalizedUser = normalizeTraineeData(user);
+
     return NextResponse.json({
-      traineeId: userId ? encrypt(String(userId)) : null,
-      FullName: user.FullName || user.fullname,
-      info: user,
+      traineeId: encrypt(String(userId)),
+      FullName: normalizedUser.fullname,
+      info: normalizedUser,
     });
   } catch (error) {
     console.error("Login error:", error);
