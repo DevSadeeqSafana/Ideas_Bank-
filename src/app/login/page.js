@@ -55,12 +55,12 @@ export default function LoginPage() {
 
           <div className="mb-5">
             <label htmlFor="email" className="block text-gray-800 text-sm mb-2 font-medium">
-              Registration Number
+              Registered Email Address
             </label>
             <input
               id="email"
               type="text"
-              placeholder="IDEAS/IGF/ABJ/AIPIL/DAI/00011"
+              placeholder="Registered Email Address"
               value={registrationno}
               onChange={(e) => setRegistrationNo(e.target.value)}
               className="w-full px-4 py-2 rounded-xl bg-white/60 text-gray-800 placeholder-gray-500 outline-none border border-transparent focus:ring-2 focus:ring-blue-400 transition"

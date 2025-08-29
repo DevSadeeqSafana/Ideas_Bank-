@@ -21,7 +21,7 @@ export async function POST(request) {
     const { registrationno } = validatedData.data;
 
     const [users] = await pool.query(
-      "SELECT * FROM trainees WHERE registrationno = ?",
+      "SELECT * FROM trainees WHERE email = ?",
       [registrationno]
     );
 
