@@ -6,6 +6,7 @@ import FormWrapper from "@/components/FormWrapper";
 import FormNavigation from "@/components/FormNavigation";
 import SearchableSelect from "@/components/SearchableSelect";
 import { motion } from "framer-motion";
+import Link from 'next/link';
 import statesAndLGAs from "@/lib/nigeria-state-and-lgas.json";
 
 function InternshipInfoContent() {
@@ -358,15 +359,23 @@ function InternshipInfoContent() {
                 />
               </div>
             </div>
-
             <FormNavigation
-              currentStep={4}
-              totalSteps={5}
-              onNext={handleSubmit}
-              onBack={() => router.back()}
-              isLastStep={true}
-              isLoading={isLoading}
-            />
+                  currentStep={4}
+                  totalSteps={5}
+                  onNext={handleSubmit}
+                  onBack={() => router.back()}
+                  isLastStep={true}
+                  isLoading={isLoading}
+                />
+            <div className="py-2 mt-3">
+                <Link href="/thank-you">
+                  <button
+                    className="px-2 py-2 rounded-xl bg-blue-400 hover:bg-blue-600 text-white font-medium shadow-md transition-all"
+                  >
+                I Haven't Started Internship
+                </button>
+              </Link>
+            </div>
           </form>
         </FormWrapper>
       </motion.div>
